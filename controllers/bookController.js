@@ -32,26 +32,31 @@ const addBook = async (req, res) => {
     }
 }
 
-const updateBook = (req, res) => {
-    Book.updateOne({
-        _id: req.params.id
-    }, {
-        $set : {
-            "name": req.body.name,
-            "description": req.body.description
-        }
-    })
-        .then(() => res.status(201).json({message: "Book updated"}))
-        .catch(err => console.error(err))
+const updateBook = async (req, res) => {
+    try {
+        await Book.findOneAndUpdate(
+          {
+            _id: req.params.id
+          },
+          {
+            "title": req.body.title,
+            "reference": req.body.reference,
+            "author": req.body.author
+          }
+        );
+        res.status(201).json({message: "Book updated"});
+      } catch (error) {
+        res.json({ message: "Book non trouvé" });
+      }
 }
 
 const deleteBook = async (req, res) => {
     try {
         await Book.findByIdAndDelete({ _id: req.params.id });
         res.status(201).json({message: "livre deleted"});
-      } catch (error) {
+    } catch (error) {
         res.json({ message: "livre non trouvé" });
-      }
+    }
 }
 
 
